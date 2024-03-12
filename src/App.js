@@ -51,11 +51,13 @@ function App() {
     <div >
       <div style={{ backgroundColor: "#e2e2e2", padding: "20px", margin: "10px"}}>    
         <strong style={{display: "block"}}>Step 1 - Enter API URL</strong><br/>
-        <input type="text" id="urlinput" style={{width: "50%"}} placeholder="https://fileupload-api.vercel.app/" 
+        <input type="text" id="urlinput" style={{width: "50%"}}  placeholder="https://fileupload-api.vercel.app/" 
                onChange={(e) => {
                 setBaseUrl(e.target?.value)
                }}
         />
+        <br/><br/>
+        <span>Note: https://fileupload-api.vercel.app/</span>
       </div>  
       <div style={{ backgroundColor: "#e2e2e2", padding: "20px", margin: "10px"}}>
         <strong style={{display: "block"}}>Step 2 - Choose part size (MB)</strong><br/>
