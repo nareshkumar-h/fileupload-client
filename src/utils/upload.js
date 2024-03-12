@@ -13,9 +13,12 @@ export class Uploader {
     // "Your proposed upload is smaller than the minimum allowed size"
     options.chunkSize = options.chunkSize || 0
     this.chunkSize = Math.max((1024 * 1024 * options.chunkSize), (1024 * 1024 * 5))
+    console.log("ChunkSize - B:", this.chunkSize , ",MB:" , Math.round(this.chunkSize/(1024*1024)));
     // number of parallel uploads
     options.threadsQuantity = options.threadsQuantity || 0
     this.threadsQuantity = Math.min(options.threadsQuantity || 5, 15)
+    console.log("noOfThreads :" + this.threadsQuantity);
+
     // adjust the timeout value to activate exponential backoff retry strategy 
     this.timeout = 0
     this.file = options.file
@@ -38,6 +41,7 @@ export class Uploader {
   }
 
   async initialize() {
+    console.log("-- initialize -- started");
     try {
       // adding the the file extension (if present) to fileName
       let fileName = this.file.name
@@ -46,6 +50,7 @@ export class Uploader {
       const videoInitializationUploadInput = {
         name: fileName,
       }
+      console.log("initialize => /uploads/initializeMultipartUpload api called");
       const initializeReponse = await api.request({
         url: "/uploads/initializeMultipartUpload",
         method: "POST",
@@ -53,6 +58,7 @@ export class Uploader {
         baseURL:this.baseURL
       })
 
+      console.log("initialize => /uploads/initializeMultipartUpload api completed");
       const AWSFileDataOutput = initializeReponse.data
 
       this.fileId = AWSFileDataOutput.fileId
@@ -60,21 +66,23 @@ export class Uploader {
 
       // retrieving the pre-signed URLs
       const numberOfparts = Math.ceil(this.file.size / this.chunkSize)
-
+      console.log("noOfParts:" , numberOfparts);
       const AWSMultipartFileDataInput = {
         fileId: this.fileId,
         fileKey: this.fileKey,
         parts: numberOfparts,
       }
 
+      console.log("initialize => /uploads/getMultipartPreSignedUrls api started");
       const urlsResponse = await api.request( {
         url: this.useTransferAcceleration?"/uploads/getMultipartPreSignedUrls":"/uploads/getMultipartPreSignedUrls",
         method: "POST",
         data: AWSMultipartFileDataInput,
         baseURL:this.baseURL
       })
-
+      console.log("initialize => /uploads/getMultipartPreSignedUrls api completed");
       const newParts = urlsResponse.data.parts
+      console.log("parts", newParts);
       this.parts.push(...newParts)
 
       this.sendNext()
@@ -91,8 +99,8 @@ export class Uploader {
 
     if (maxConnectionsReached || !navigator.onLine) {
       // Check if the maximum parallel connections are reached or if the system is offline
-      console.log( "Retry after 5 seconds")
-      setTimeout(() => this.sendNext(retry), 5000); // Retry after 5 seconds
+      console.log( "Retry after 10 seconds")
+      setTimeout(() => this.sendNext(retry), 10000); // Retry after 10 seconds
       return
     }
 
@@ -108,7 +116,8 @@ export class Uploader {
     if (this.file && part) {
       const sentSize = (part.PartNumber - 1) * this.chunkSize;
       const chunk = this.file.slice(sentSize, sentSize + this.chunkSize)
-      console.log("sentSize:", sentSize, ",chunkSize", this.chunkSize);
+      // console.log("sentSize:", sentSize, ",chunkSize", this.chunkSize);
+      console.log("sentSize(MB):", Math.round(sentSize/(1024*1024)), ",chunkSize(MB)", Math.round(this.chunkSize/(1024*1024)));
 
       const sendChunkStarted = () => {
         this.sendNext()

@@ -9,7 +9,8 @@ function App() {
   const [baseUrl,setBaseUrl] = useState(undefined)
   const [partsize,setPartsize] = useState(undefined)
   const [numuploads,setNumuploads] = useState(undefined)
-  const [ta,setTa] = useState(undefined)
+  // const [ta,setTa] = useState(undefined)
+  const [ta,setTa] = useState(false)
 
   useEffect(() => {
     if (file) {
@@ -30,7 +31,9 @@ function App() {
         .onProgress(({ percentage: newPercentage }) => {
           // to avoid the same percentage to be logged twice
           if(percentage === 100){
-             setPerf((performance.now() - tBegin)/1000)
+            const timeTaken = (performance.now() - tBegin)/1000;
+            const totalTimeTaken = timeTaken.toFixed(2);
+            setPerf(totalTimeTaken);
           }
           if (newPercentage !== percentage) {
             percentage = newPercentage
@@ -75,16 +78,16 @@ function App() {
                }}
         />
       </div> 
-      <div style={{ backgroundColor: "#e2e2e2", padding: "20px", margin: "10px"}}>
+      {/* <div style={{ backgroundColor: "#e2e2e2", padding: "20px", margin: "10px"}}>
         <strong style={{display: "block"}}>Step 4 - Use Transfer Acceleration</strong><br/>
         <input type="checkbox" id="ta"
                onChange={(e) => {
                 setTa(e.target?.checked)
                }}
         />
-      </div>                 
+      </div>                  */}
       <div style={{ backgroundColor: "#e2e2e2", padding: "20px", margin: "10px"}}>
-        <strong style={{display: "block"}}>Step 5 - Choose a file</strong><br/>
+        <strong style={{display: "block"}}>Step 4 - Choose a file</strong><br/>
         <input type="file" id="fileinput" 
                onChange={(e) => {
                 setFile(e.target?.files?.[0])
@@ -92,7 +95,7 @@ function App() {
         />
       </div>
       <div style={{ backgroundColor: "#e2e2e2", padding: "20px", margin: "10px"}}>
-        <strong style={{display: "block"}}>Step 6 - Monitor</strong><br/>
+        <strong style={{display: "block"}}>Step 5 - Monitor</strong><br/>
         <span id="output">{pgvalue}% ({perf} sec)</span>
       </div>
     </div>
