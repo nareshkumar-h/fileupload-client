@@ -5,7 +5,6 @@ const api = axios.create({
   baseURL: "/",
 })
 
-// original source: https://github.com/pilovm/multithreaded-uploader/blob/master/frontend/uploader.js
 export class Uploader {
   constructor(options) {
     this.useTransferAcceleration = options.useTransferAcceleration
