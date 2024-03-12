@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react"
 import "./App.css"
 import { Uploader } from "./utils/upload"
-import { useEffect, useState } from "react"
 
 function App() {
   const [file, setFile] = useState(undefined)
@@ -51,7 +51,7 @@ function App() {
     <div >
       <div style={{ backgroundColor: "#e2e2e2", padding: "20px", margin: "10px"}}>    
         <strong style={{display: "block"}}>Step 1 - Enter API URL</strong><br/>
-        <input type="text" id="urlinput" style={{width: "50%"}} placeholder="https://example.execute-api.example.amazonaws.com/example/" 
+        <input type="text" id="urlinput" style={{width: "50%"}} placeholder="https://fileupload-api.vercel.app/" 
                onChange={(e) => {
                 setBaseUrl(e.target?.value)
                }}
